@@ -1,0 +1,41 @@
+services:
+  client:
+    build: ./client
+    command: npm run dev
+    env_file:
+      - ./server/.env
+
+    depends_on:
+      - server
+
+    ports:
+      - 8080:8080
+
+  server:
+    build: ./server/
+    
+    # The database populate command should be ran once only
+    # command: sh -c "npm run seed:db admin@rmit.edu.vn admin@admin
+    #   && npm run dev"
+    command: npm run dev
+    env_file:
+      - ./server/.env
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/rmit_ecommerce
+
+    depends_on:
+      - mongodb
+
+    ports:
+      - 3000:3000
+
+  mongodb:
+    image: mongo:8-noble
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: root
+    #   MONGO_INITDB_ROOT_PASSWORD: admin@admin
+    restart: always
+
